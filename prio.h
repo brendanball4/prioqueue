@@ -24,6 +24,9 @@ public:
     // Not currently in use, mostly for debugging.
     void printHeap() const;
 
+    // Returns the current number of elements in the heap.
+    size_t getSize() const;
+
 private:
     int* heap; // Dynamic array to store elements
     size_t size; // Current number of elements in the heap.

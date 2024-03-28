@@ -101,46 +101,63 @@ void KaryHeap::heapMoveUp(int i) {
     }
 }
 
+// Returns the current number of elements in the heap.
+size_t KaryHeap::getSize() const {
+    return size;
+}
+
 
 // Set the test size to 10 mill.
 #define TEST_SIZE 100000000
 
 int main() {
-    // Set the nodes of the heap to 3 and the initial capacity to TEST_SIZE.
-    int k = 3; 
+    int k = 3;
     KaryHeap heap(k, TEST_SIZE);
 
-    // Start timing the insertion process.
-    auto startInsert = std::chrono::high_resolution_clock::now();
-    // Insert the amount that is TEST_SIZE as elements into the heap.
+    // Initialize random
+    srand(static_cast<unsigned>(time(nullptr)));
+
+    size_t insertCount = 0; // Counter for insert operations
+    size_t extractCount = 0; // Counter for extractMin operations
+
+    // Sequential insertion
+    auto startSeqInsert = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i < TEST_SIZE; ++i) {
-        heap.insert(i);
+        heap.insert(rand() % TEST_SIZE); // Random values, sequential insertion
+        insertCount++; // Increment insert counter
     }
-    // Stop timing the insertion process.
-    auto endInsert = std::chrono::high_resolution_clock::now();
-    // Calculate the duration of the insertion in microseconds and convert to seconds for display.
-    std::chrono::duration<double, std::micro> insertTime = endInsert - startInsert;
-    std::cout << "Time taken to insert " << TEST_SIZE << " elements: " << insertTime.count() / 1000000.0 << " seconds." << std::endl;
+    auto endSeqInsert = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::micro> seqInsertTime = endSeqInsert - startSeqInsert;
 
-    // Start timing the extraction of the minimum element.
+    // Random value insertion
+    // Resetting the heap for random values
+    KaryHeap heapRandom(k, TEST_SIZE);
+    auto startRandInsert = std::chrono::high_resolution_clock::now();
+    for (size_t i = 0; i < TEST_SIZE; ++i) {
+        heapRandom.insert(rand() % TEST_SIZE); // Random values, sequential insertion to simulate random behavior
+        insertCount++; // Increment insert counter for each insertion
+    }
+    auto endRandInsert = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::micro> randInsertTime = endRandInsert - startRandInsert;
+
+    // Extract min operations
     auto startExtractMin = std::chrono::high_resolution_clock::now();
-    // Take out the minimum element from the heap.
-    int min = heap.extractMin();
-    // Stop timing the extraction process.
+    while (heapRandom.getSize() > (TEST_SIZE / 1.1)) {
+        heapRandom.extractMin();
+        extractCount++; // Increment extract counter for each extraction
+    }
     auto endExtractMin = std::chrono::high_resolution_clock::now();
-    // Calculate the duration of the extraction in microseconds and convert to seconds for display.
     std::chrono::duration<double, std::micro> extractMinTime = endExtractMin - startExtractMin;
-    std::cout << "Time taken to extract the minimum element: " << extractMinTime.count() / 1000000.0 << " seconds." << std::endl;
-    // Display the extracted minimum element.
-    std::cout << "Extracted minimum element: " << min << std::endl;
 
-    // If needed, uncomment this code to see all the heap elements.
-    // std::cout << "Heap after extraction: ";
-    // heap.printHeap();
+    std::cout << "Sequential insertion time for " << TEST_SIZE << " elements: " << seqInsertTime.count() / 1000000.0 << " seconds." << std::endl;
+    std::cout << "Random value insertion time for " << TEST_SIZE << " elements: " << randInsertTime.count() / 1000000.0 << " seconds." << std::endl;
+    std::cout << "Time taken to extract all elements: " << extractMinTime.count() / 1000000.0 << " seconds." << std::endl;
 
-    // To prevent the console window from closing immediately after execution,
-    // especially on Windows, wait for the user to press ENTER.
-    // Might have to press 2 times, I am not sure why it does that.
+    std::cout << "Total number of insert operations: " << insertCount << std::endl;
+    std::cout << "Total number of extractMin operations: " << extractCount << std::endl;
+
+    // To prevent the console window from closing immediately after execution
+    // Press twice, not sure how to fix.
     std::cout << "Press ENTER to exit.";
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     std::cin.get();
