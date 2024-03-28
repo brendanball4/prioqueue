@@ -108,10 +108,10 @@ size_t KaryHeap::getSize() const {
 
 
 // Set the test size to 10 mill.
-#define TEST_SIZE 100000000
+#define TEST_SIZE 5000000
 
 int main() {
-    int k = 3;
+    int k = 4;
     KaryHeap heap(k, TEST_SIZE);
 
     // Initialize random
@@ -142,7 +142,7 @@ int main() {
 
     // Extract min operations
     auto startExtractMin = std::chrono::high_resolution_clock::now();
-    while (heapRandom.getSize() > (TEST_SIZE / 1.1)) {
+    while (heapRandom.getSize() > 0) {
         heapRandom.extractMin();
         extractCount++; // Increment extract counter for each extraction
     }
